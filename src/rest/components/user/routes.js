@@ -1,11 +1,13 @@
 import express from 'express';
 require('express-group-routes');
+import { getAll } from './controller';
 
-const persons = express.Router();
+const users = express.Router();
 
-persons.group("/persons", (router) => {
+users.group("/users", (router) => {
     router.get("", (req, res) => {
-        console.log("desde /");
+		console.log("desde /");
+		getAll();
     });
     router.get("/:id", (req, res) => {
         console.log("desde :id");
@@ -18,4 +20,4 @@ persons.group("/persons", (router) => {
     });
 });
 
-module.exports = persons;
+module.exports = users;
