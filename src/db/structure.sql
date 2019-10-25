@@ -1,4 +1,5 @@
 CREATE SCHEMA `homesservices` ;
+USE `homesservices` ;
 
 CREATE TABLE `tipo_usuario` (
   `id` BIGINT NOT NULL,
@@ -6,7 +7,7 @@ CREATE TABLE `tipo_usuario` (
   PRIMARY KEY (`id`));
 
 CREATE TABLE `usuario` (
-  `id` BIGINT NOT NULL,
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
   `apellido` VARCHAR(45) NOT NULL,
   `fecha_nacimiento` DATE NOT NULL,

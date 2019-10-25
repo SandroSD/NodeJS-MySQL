@@ -5,9 +5,9 @@ import { getAll } from './controller';
 const users = express.Router();
 
 users.group("/usuarios", (router) => {
-    router.get("", (req, res) => {
-		console.log("desde /");
-		getAll();
+    router.get("", async(req, res) => {
+		const usuarios = await getAll();
+		console.log(usuarios);
     });
     router.get("/:id", (req, res) => {
         console.log("desde :id");

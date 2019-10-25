@@ -1,19 +1,10 @@
 import mysql from 'mysql';
 
-export default class Bd {
-	constructor(){
-		conn = mysql.createConnection({
-			host: 'localhost',
-			user: 'root',
-			password: 's4ndr0'
-		});
-	}
+const conn = mysql.createConnection({
+	host: 'localhost',
+	user: 'root',
+	password: '',
+	database: 'homesservices'
+});
 
-	conectarBd(){
-		conn.connect();
-	}
-
-	desconectarBd(){
-		conn.end();
-	}
-}
+module.exports = conn;
