@@ -1,3 +1,3 @@
-import users from './user/routes';
+import usuarios from './usuario/routes';
 
-module.exports = users;
+module.exports = usuarios;

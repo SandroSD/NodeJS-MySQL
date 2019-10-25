@@ -4,7 +4,7 @@ import { getAll } from './controller';
 
 const users = express.Router();
 
-users.group("/users", (router) => {
+users.group("/usuarios", (router) => {
     router.get("", (req, res) => {
 		console.log("desde /");
 		getAll();
