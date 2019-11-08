@@ -29,9 +29,9 @@ const get = (id) => new Promise(async (resolve, reject) => {
 		db.getConnection((err, conn) => {
 			if(err) reject(err);
 	
-			const query = `SELECT * FROM usuario where id = ${id}`;
+			const query = "SELECT * FROM usuario where id = ? ";
 		
-			conn.query(query, (err, res) => {
+			conn.query(query, [id], (err, res) => {
 				if(err) reject(err);
 
 				let usuario = null;
@@ -48,4 +48,22 @@ const get = (id) => new Promise(async (resolve, reject) => {
 	}
 });
 
-module.exports = { getAll, get };
+const post = (usuario) => new Promise(async (resolve, reject) => {
+	try{
+		db.getConnection((err, conn) => {
+			if(err) reject(err);
+			console.log({...usuario});
+			const query = "INSERT INTO usuario (nombre, apellido, fecha_nacimiento, correo_electronico, password, tipo_usuario) VALUES ? ";
+
+			conn.query(query, usuario, (err, res) => {
+				if(err) reject(err);
+
+				console.log("result", res);
+			})
+		});
+	}catch(e){
+		console.log("Err: ",e);
+	}
+});
+
+module.exports = { getAll, get, post };

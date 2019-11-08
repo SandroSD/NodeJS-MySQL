@@ -1,6 +1,6 @@
 import express from 'express';
 require('express-group-routes');
-import { getAll, get } from './controller';
+import { getAll, get, post } from './controller';
 
 const users = express.Router();
 
@@ -15,8 +15,8 @@ users.group("/usuarios", (router) => {
             res.status(404).end();
         res.status(200).send(usuario);
     });
-    router.post("", (req, res) => {
-        console.log("desde post");
+    router.post("", async (req, res) => {
+        const usuario = await post(req.body);
     });
     router.put("/:id", (req, res) => {
         console.log("desde put");
