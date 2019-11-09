@@ -17,9 +17,11 @@ users.group("/usuarios", (router) => {
     });
     router.post("", async (req, res) => {
         const usuario = await post(req.body);
+        res.status(201).send(usuario);
     });
-    router.put("/:id", (req, res) => {
-        console.log("desde put");
+    router.put("/:id", async (req, res) => {
+        const usuario = await put(req.body);
+        res.status(204).end();
     });
 });
 

@@ -52,17 +52,27 @@ const post = (usuario) => new Promise(async (resolve, reject) => {
 	try{
 		db.getConnection((err, conn) => {
 			if(err) reject(err);
-			console.log({...usuario});
-			const query = "INSERT INTO usuario (nombre, apellido, fecha_nacimiento, correo_electronico, password, tipo_usuario) VALUES ? ";
+			const query = "INSERT INTO usuario (`nombre`, `apellido`, `fecha_nacimiento`, `correo_electronico`, `password`, `tipo_usuario`) VALUES ( ? ) ";
 
-			conn.query(query, usuario, (err, res) => {
+			conn.query(query, [Object.values(usuario)], (err, res) => {
 				if(err) reject(err);
-
-				console.log("result", res);
+				
+				usuario.id = res.insertId;
+				resolve(usuario);
 			})
 		});
 	}catch(e){
 		console.log("Err: ",e);
+	}
+});
+
+const put = (usuario)  => new Promise(async (resolve, reject) => {
+	try{
+		db.getConnection((err, conn) => {
+			
+		});
+	}catch(e){
+		console.log("Err: ", e);
 	}
 });
 
