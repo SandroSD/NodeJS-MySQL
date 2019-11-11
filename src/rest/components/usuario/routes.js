@@ -1,6 +1,9 @@
 import express from 'express';
 require('express-group-routes');
-import { getAll, get, post } from './controller';
+import { getAll, get, post, put } from './controller';
+import { validate } from './validate';
+import { validationResult } from 'express-validator';
+import { showErrors } from '../../../helpers/manageErrors';
 
 const users = express.Router();
 
@@ -10,18 +13,24 @@ users.group("/usuarios", (router) => {
         res.status(200).send(usuarios);
     });
     router.get("/:id", async (req, res) => {
-        const usuario = await get(...req.params.id);
+        const usuario = await get(req.params.id);
         if(!usuario)
             res.status(404).end();
         res.status(200).send(usuario);
     });
-    router.post("", async (req, res) => {
-        const usuario = await post(req.body);
-        res.status(201).send(usuario);
+    router.post("", validate(), async (req, res) => {   console.log(req.body)
+        const errors = showErrors(validationResult(req));
+        if (!errors.isEmpty()) {
+            return res.status(422).json({ errors: errors.array() });
+        }else{
+            const usuario = await post(req.body);
+            res.status(201).send(usuario);
+        }
     });
     router.put("/:id", async (req, res) => {
-        const usuario = await put(req.body);
-        res.status(204).end();
+        const mensaje = await put(req.body, req.params.id);
+        console.log(mensaje);
+        res.status(204).send(mensaje);
     });
 });
 

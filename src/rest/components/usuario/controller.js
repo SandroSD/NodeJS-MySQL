@@ -66,14 +66,22 @@ const post = (usuario) => new Promise(async (resolve, reject) => {
 	}
 });
 
-const put = (usuario)  => new Promise(async (resolve, reject) => {
+const put = (usuario, id)  => new Promise(async (resolve, reject) => {
 	try{
 		db.getConnection((err, conn) => {
-			
+			if(err) reject(err);
+			usuario.id = parseInt(id);
+			const query = "UPDATE usuario SET nombre = ?, apellido = ?, fecha_nacimiento = ?, correo_electronico = ?, password = ?, tipo_usuario = ? WHERE id = ? ";
+
+			conn.query(query, Object.values(usuario), (err, res) => {
+				if(err) reject(err);
+
+				resolve({mensaje: "Usuario modificado correctamente."});
+			})
 		});
 	}catch(e){
 		console.log("Err: ", e);
 	}
 });
 
-module.exports = { getAll, get, post };
+module.exports = { getAll, get, post, put };
