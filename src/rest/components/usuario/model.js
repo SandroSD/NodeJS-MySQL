@@ -1,19 +1,39 @@
-export default class Usuario {
-	nombre;
-	apellido;
-	fecha_nacimiento;
-	correo_electronico;
-	password;
+class Usuario {
 
-	getNombre() { return this.nombre; }
-	getApellido() { return this.apellido; }
-	getFechaNacimiento() { return this.fecha_nacimiento; }
-	getCorreoElectronico() { return this.correo_electronico; }
-	getPassword() { return this.password; }
+	get nombre() {
+		return this._nombre;
+	}
+	set nombre(nombre) { 
+		this._nombre = nombre;
+	}
+
+	get apellido() {
+		return this._apellido;
+	}
+	set apellido(apellido) {
+		this._apellido = apellido;
+	}
+
+	set fecha_nacimiento(fecha_nacimiento) {
+		this._fecha_nacimiento = fecha_nacimiento;
+	}
+	get fecha_nacimiento() {
+		return this._fecha_nacimiento;
+	}
+
+	get correo_electronico() {
+		return this._correo_electronico;
+	}
+	set correo_electronico(correo_electronico) {
+		this._correo_electronico = correo_electronico;
+	}
 	
-	setNombre(nombre) { this.nombre = nombre; }
-	setApellido(apellido) { this.apellido = apellido; }
-	setFechaNacimiento(fecha_nacimiento) { this.fecha_nacimiento = fecha_nacimiento; }
-	setCorreoElectronico(correo_electronico) { this.correo_electronico = correo_electronico; }
-	setPassword(password) {this.password = password; }
+	get password() {
+		return this._password;
+	}
+	set password(password) {
+		this._password = password;
+	}
 }
+
+export default Usuario;
