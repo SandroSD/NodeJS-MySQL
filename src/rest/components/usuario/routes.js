@@ -18,13 +18,15 @@ users.group("/usuarios", (router) => {
             res.status(404).end();
         res.status(200).send(usuario);
     });
-    router.post("", validate(), async (req, res) => {   console.log(req.body)
-        const errors = showErrors(validationResult(req));
-        if (!errors.isEmpty()) {
-            return res.status(422).json({ errors: errors.array() });
+    router.post("", validate(), async (req, res) => {
+		const validations = validationResult(req);
+		const errors = showErrors(validations);
+        if (errors !== null) {
+			console.log("errs", errors);
+            return res.status(422).json(errors);
         }else{
-            const usuario = await post(req.body);
-            res.status(201).send(usuario);
+            //const usuario = await post(req.body);
+            //res.status(201).send(usuario);
         }
     });
     router.put("/:id", async (req, res) => {
