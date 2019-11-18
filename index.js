@@ -5,6 +5,8 @@ import { usuarios, imagenes } from './src/rest/components'
 
 const app = express();
 
+app.set('key', config.key);
+
 app.use(bodyParser.urlencoded({ extended: false }))
    .use(express.json())
    .use(morgan('short'));

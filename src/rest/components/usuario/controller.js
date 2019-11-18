@@ -29,7 +29,7 @@ const get = (id) => new Promise(async (resolve, reject) => {
 		db.getConnection((err, conn) => {
 			if(err) reject(err);
 	
-			const query = "SELECT * FROM usuario where id = ? ";
+			const query = "SELECT * FROM usuario WHERE id = ? ";
 		
 			conn.query(query, [id], (err, res) => {
 				if(err) reject(err);
@@ -44,7 +44,31 @@ const get = (id) => new Promise(async (resolve, reject) => {
 			});
 		});
 	}catch(e) {
-		console.log("Exc:    ",e);
+		console.log("Exc: ",e);
+	}
+});
+
+const getByCorreoElectronico = (correo) => new Promise(async (resolve, reject) => {
+	try {
+		db.getConnection((err, conn) => {
+			if(err) reject(err);
+
+			const query = "SELECT * FROM usuario WHERE correo_electronico = ? ";
+
+			conn.query(query, [correo], (err, res) => {
+				if(err) reject(err);
+
+				let Usuario = new Usuario();
+				if(res.length){
+					Usuario = {...res[0]};
+					Usuario.fecha_nacimiento = moment(Usuario.fecha_nacimiento).format('DD/MM/YYYY');
+				}
+
+				resolve(Usuario);
+			});
+		});
+	}catch(e){
+		console.log("Exc: ", e);
 	}
 });
 
@@ -84,4 +108,10 @@ const put = (usuario, id)  => new Promise(async (resolve, reject) => {
 	}
 });
 
-module.exports = { getAll, get, post, put };
+module.exports = {
+	getAll,
+	get,
+	getByCorreoElectronico,
+	post,
+	put
+};
