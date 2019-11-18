@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
-import routes from './src/rest/components'
+import { usuarios, imagenes } from './src/rest/components'
 
 const app = express();
 
@@ -20,7 +20,7 @@ app.get("/", (req, res) => {
     res.send("Hello from ROOOT");
 });
 
-app.use(routes);
+app.use("/imagenes", imagenes);
 
 const PORT = process.env.PORT || 3003
 
