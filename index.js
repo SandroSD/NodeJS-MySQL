@@ -2,8 +2,11 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import routes from './src/rest/components'
+import config from './src/config/config';
 
 const app = express();
+
+app.set('key', config.key);
 
 app.use(bodyParser.urlencoded({ extended: false }))
    .use(express.json())
