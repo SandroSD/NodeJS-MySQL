@@ -1,9 +1,11 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
-import routes from './src/rest/components'
+import { usuarios, imagenes } from './src/rest/components'
 
 const app = express();
+
+app.set('key', 'config.key');
 
 app.use(bodyParser.urlencoded({ extended: false }))
    .use(express.json())
@@ -20,7 +22,8 @@ app.get("/", (req, res) => {
     res.send("Hello from ROOOT");
 });
 
-app.use(routes);
+app.use("/usuarios", usuarios);
+app.use("/imagenes", imagenes);
 
 const PORT = process.env.PORT || 3003
 
