@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const bodyParser = require('body-parser');
 
@@ -10,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(personas);
 
-const PORT = 8080;
+const { PORT } = process.env;
 
 app.listen(PORT, () => {
     console.log(`Aplicación iniciada en el puerto: http://localhost:${PORT}`);

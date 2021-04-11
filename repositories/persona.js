@@ -1,15 +1,19 @@
+require('dotenv').config();
+
 const mysql = require('mysql');
 
 const { parseDate } = require('../helpers/date');
+
+const { host, user, password, database } = process.env;
 
 const Persona = require('../models/Persona');
 
 const pool = mysql.createPool({
     connectionLimit: 20,
-    host: 'localhost',
-    user: 'root',
-    password: 's4ndr0',
-    database: 'node_pruebas',
+    host,
+    user,
+    password,
+    database,
     typeCast: function castField( field, useDefaultTypeCasting ) {
 
 		// We only want to cast bit fields that have a single-bit in them. If the field
