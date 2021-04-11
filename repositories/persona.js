@@ -28,7 +28,7 @@ const pool = mysql.createPool({
 	}
 });
 
-const getPersonas = (desde, limite) => {
+module.exports.getPersonas = (desde, limite) => {
     return new Promise((resolve, reject) => {
         const sql = `
             SELECT *
@@ -66,7 +66,7 @@ const getPersonas = (desde, limite) => {
     });
 }
 
-const getPersonaById = id => {
+module.exports.getPersonaById = id => {
     return new Promise((resolve, reject) => {
         const sql = `
             SELECT *
@@ -98,7 +98,7 @@ const getPersonaById = id => {
     });
 }
 
-const createPersona = persona => {
+module.exports.createPersona = persona => {
     return new Promise((resolve, reject) => {
         pool.getConnection((err, conn) => {
             if(err) throw err;
@@ -128,7 +128,7 @@ const createPersona = persona => {
     });
 }
 
-const updatePersona = persona => {
+module.exports.updatePersona = persona => {
     return new Promise((resolve, reject) => {
         pool.getConnection((err, conn) => {
             if(err) throw err;
@@ -155,7 +155,7 @@ const updatePersona = persona => {
     });
 }
 
-const deletePersona = persona => {
+module.exports.deletePersona = persona => {
     return new Promise((resolve, reject) => {
         pool.getConnection((err, conn) => {
             if(err) throw err;
@@ -177,12 +177,4 @@ const deletePersona = persona => {
             });
         });
     });
-}
-
-module.exports = {
-    getPersonas,
-    getPersonaById,
-    createPersona,
-    updatePersona,
-    deletePersona
 }
