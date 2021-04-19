@@ -50,11 +50,11 @@ module.exports.getPersonas = (desde, limite) => {
         
                 rows.forEach(row => {
         
-                    let { id, nombre, apellido, fecha_nacimiento, direccion, activo } = row;
+                    let { id, nombre, apellido, mail, fecha_nacimiento, direccion, activo } = row;
         
                     fecha_nacimiento = parseDate(fecha_nacimiento);
         
-                    const persona = new Persona(id, nombre, apellido, fecha_nacimiento, direccion, activo);
+                    const persona = new Persona(id, nombre, apellido, mail, null, fecha_nacimiento, direccion, activo);
                     
                     personas.push(persona);
                 });
@@ -85,11 +85,43 @@ module.exports.getPersonaById = id => {
                 if(err) throw err;
     
                 if(rows[0]) {
-                    let { id, nombre, apellido, fecha_nacimiento, direccion, activo } = rows[0];
+                    let { id, nombre, apellido, mail, fecha_nacimiento, direccion, activo } = rows[0];
         
                     fecha_nacimiento = parseDate(fecha_nacimiento);
             
-                    const persona = new Persona(id, nombre, apellido, fecha_nacimiento, direccion, activo);
+                    const persona = new Persona(id, nombre, apellido, mail, null, fecha_nacimiento, direccion, activo);
+        
+                    resolve(persona);
+                }
+    
+                conn.release();
+
+                resolve(null);
+            });
+        });
+    });
+}
+
+module.exports.getPersonaByMail = mail => {
+    return new Promise((resolve, reject) => {
+        const sql = `
+            SELECT *
+                FROM personas
+                WHERE mail = ${pool.escape(mail)}
+        `;
+
+        pool.getConnection((err, conn) => {
+            if(err) throw err;
+
+            conn.query(sql, async (err, rows, fields) => {
+                if(err) throw err;
+    
+                if(rows[0]) {
+                    let { id, nombre, apellido, mail, clave, fecha_nacimiento, direccion, activo } = rows[0];
+        
+                    fecha_nacimiento = parseDate(fecha_nacimiento);
+            
+                    const persona = new Persona(id, nombre, apellido, mail, clave, fecha_nacimiento, direccion, activo);
         
                     resolve(persona);
                 }
@@ -109,10 +141,12 @@ module.exports.createPersona = persona => {
 
             const sql = `
                 INSERT
-                    INTO personas (nombre, apellido, fecha_nacimiento, direccion)
+                    INTO personas (nombre, apellido, mail, clave, fecha_nacimiento, direccion)
                 VALUES (
                     ${conn.escape(persona.nombre)},
                     ${conn.escape(persona.apellido)},
+                    ${conn.escape(persona.mail)},
+                    ${conn.escape(persona.clave)},
                     ${conn.escape(persona.fecha_nacimiento)},
                     ${conn.escape(persona.direccion)}
                 );
@@ -141,10 +175,36 @@ module.exports.updatePersona = persona => {
                 UPDATE personas
                     SET nombre = ${conn.escape(persona.nombre)},
                         apellido = ${conn.escape(persona.apellido)},
+                        mail = ${conn.escape(persona.mail)},
+                        clave = ${conn.escape(persona.clave)},
                         fecha_nacimiento = ${conn.escape(persona.fecha_nacimiento)},
                         direccion = ${conn.escape(persona.direccion)}
                     WHERE (
                         id = ${conn.escape(persona.id)}
+                    );
+            `;
+
+            conn.query(sql, async (err, rows, fields) => {
+                if(err) throw err;
+
+                resolve(null);
+
+                conn.release();
+            });
+        });
+    });
+}
+
+module.exports.modificarClave = (id, clave) => {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, conn) => {
+            if(err) throw err;
+
+            const sql = `
+                UPDATE personas
+                    SET clave = ${conn.escape(clave)}
+                    WHERE (
+                        id = ${conn.escape(id)}
                     );
             `;
 

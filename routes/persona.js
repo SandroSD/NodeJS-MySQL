@@ -1,9 +1,19 @@
 const express = require('express');
+const bcrypt = require('bcrypt');
 const Persona = require('../models/Persona');
+
+const { PersonaSchema } = require('../validations_schema/Persona');
 
 const routes = express.Router();
 
-const { getPersonas, getPersonaById, createPersona, updatePersona, deletePersona } = require('../repositories/persona');
+const {
+        getPersonas,
+        getPersonaById,
+        getPersonaByMail,
+        createPersona,
+        updatePersona,
+        deletePersona
+    } = require('../repositories/persona');
 
 routes.post('/personas/grilla', async (req, res) => {
     const { body } = req;
@@ -53,12 +63,34 @@ routes.get('/personas/:id', async (req, res) => {
 routes.post('/personas', async (req, res) => {
     try {
         const { body } = req;
-        const { nombre, apellido, fecha_nacimiento, direccion } = body;
 
-        const persona = await createPersona(new Persona(null, nombre, apellido, fecha_nacimiento, direccion));
+        const { error } = PersonaSchema.validate(body);
 
-        res.json(persona)
-        res.status(201);
+        if(error) {
+            return res.status(400)
+                    .json({
+                        error: error.details[0].message
+                    })
+        }
+
+        const personaMail = await getPersonaByMail(body.mail);
+
+        if(personaMail) {
+            return res.status(400)
+                    .json({
+                        error: "Mail duplicado"
+                    })
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const clave = await bcrypt.hash(body.clave, salt);
+
+        const { nombre, apellido, mail, fecha_nacimiento, direccion } = body;
+
+        const persona = await createPersona(new Persona(null, nombre, apellido, mail, clave, fecha_nacimiento, direccion));
+
+        return res.status(201)
+                    .json(persona);
     } catch (error) {
         console.log(error);
         res.status(500);
@@ -69,6 +101,25 @@ routes.put('/personas/:id', async (req, res) => {
     try {
         const { body } = req;
         const { id } = req.params;
+
+        const { error } = PersonaSchema.validate(body);
+
+        if(error) {
+            return res.status(400)
+                    .json({
+                        error: error.details[0].message
+                    });
+        }
+
+        const personaMail = await getPersonaByMail(body.mail);
+
+        if(personaMail && id !== personaMail.id) {
+            return res.status(400)
+                    .json({
+                        error: "Mail duplicado"
+                    })
+        }
+
         const { nombre, apellido, fecha_nacimiento, direccion } = body;
 
         await updatePersona(new Persona(id, nombre, apellido, fecha_nacimiento, direccion));
