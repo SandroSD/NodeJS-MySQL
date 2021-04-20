@@ -117,11 +117,11 @@ module.exports.getPersonaByMail = mail => {
                 if(err) throw err;
     
                 if(rows[0]) {
-                    let { id, nombre, apellido, mail, clave, fecha_nacimiento, direccion, activo } = rows[0];
+                    let { id, nombre, apellido, mail, clave, fecha_nacimiento, direccion, roles, activo } = rows[0];
         
                     fecha_nacimiento = parseDate(fecha_nacimiento);
             
-                    const persona = new Persona(id, nombre, apellido, mail, clave, fecha_nacimiento, direccion, activo);
+                    const persona = new Persona(id, nombre, apellido, mail, clave, fecha_nacimiento, direccion, roles, activo);
         
                     resolve(persona);
                 }
@@ -176,7 +176,6 @@ module.exports.updatePersona = persona => {
                     SET nombre = ${conn.escape(persona.nombre)},
                         apellido = ${conn.escape(persona.apellido)},
                         mail = ${conn.escape(persona.mail)},
-                        clave = ${conn.escape(persona.clave)},
                         fecha_nacimiento = ${conn.escape(persona.fecha_nacimiento)},
                         direccion = ${conn.escape(persona.direccion)}
                     WHERE (

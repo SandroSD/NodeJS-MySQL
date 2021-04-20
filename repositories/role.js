@@ -1,0 +1,67 @@
+require('dotenv').config();
+
+const mysql = require('mysql');
+
+const { host, user, password, database } = process.env;
+
+const { getPermissionsByRole } = require('./permission');
+
+const Role = require('../models/Role');
+
+const pool = mysql.createPool({
+    connectionLimit: 20,
+    host,
+    user,
+    password,
+    database,
+    typeCast: function castField( field, useDefaultTypeCasting ) {
+
+		// We only want to cast bit fields that have a single-bit in them. If the field
+		// has more than one bit, then we cannot assume it is supposed to be a Boolean.
+		if ( ( field.type === "BIT" ) && ( field.length === 1 ) ) {
+
+			var bytes = field.buffer();
+
+			// A Buffer in Node represents a collection of 8-bit unsigned integers.
+			// Therefore, our single "bit field" comes back as the bits '0000 0001',
+			// which is equivalent to the number 1.
+			return( bytes[ 0 ] === 1 );
+		}
+
+		return( useDefaultTypeCasting() );
+	}
+});
+
+module.exports.getRoleById = (id) => {
+    return new Promise((resolve, reject) => {
+        const sql = `
+            SELECT *
+                FROM roles
+                WHERE id = ${pool.escape(id)}
+        `;
+
+        pool.getConnection((err, conn) => {
+            if(err) throw err;
+
+            conn.query(sql, async (err, rows, fields) => {
+                if(err) throw err;
+    
+                if(rows[0]) {
+                    let { id, name, description, activo } = rows[0];
+        
+                    const role = new Role(id, name, description, [], activo);
+            
+                    const permissions = await getPermissionsByRole(id);
+
+                    role.permissions = permissions;
+
+                    resolve(role);
+                }
+    
+                conn.release();
+
+                resolve(null);
+            });
+        });
+    });
+}

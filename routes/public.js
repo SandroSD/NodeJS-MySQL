@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const { getPersonaByMail } = require('../repositories/persona');
+const { getRoleById } = require('../repositories/role');
 const { LoginSchema } = require('../validations_schema/Login');
 
 const routes = express.Router();
@@ -22,6 +23,10 @@ routes.post('/auth/login', async (req, res) => {
         }
 
         const persona = await getPersonaByMail(body.mail);
+
+        const role = await getRoleById(persona.role);
+
+        persona.role = role;
 
         if(!persona) {
             return res.status(400)

@@ -4,6 +4,10 @@ const Persona = require('../models/Persona');
 
 const { PersonaSchema } = require('../validations_schema/Persona');
 
+const { hasPermission } = require('../middlewares/permission');
+
+const { grid, getById, create, update, remove } = require('../security/permissions/persona');
+
 const routes = express.Router();
 
 const {
@@ -15,7 +19,7 @@ const {
         deletePersona
     } = require('../repositories/persona');
 
-routes.post('/personas/grilla', async (req, res) => {
+routes.post('/personas/grilla', hasPermission(grid), async (req, res) => {
     const { body } = req;
     let { desde, limite } = body;
 
@@ -38,7 +42,7 @@ routes.post('/personas/grilla', async (req, res) => {
     }
 });
 
-routes.get('/personas/:id', async (req, res) => {
+routes.get('/personas/:id', hasPermission(getById), async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -60,7 +64,7 @@ routes.get('/personas/:id', async (req, res) => {
     }
 });
 
-routes.post('/personas', async (req, res) => {
+routes.post('/personas', hasPermission(create), async (req, res) => {
     try {
         const { body } = req;
 
@@ -85,9 +89,9 @@ routes.post('/personas', async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const clave = await bcrypt.hash(body.clave, salt);
 
-        const { nombre, apellido, mail, fecha_nacimiento, direccion } = body;
+        const { nombre, apellido, mail, fecha_nacimiento, direccion, role } = body;
 
-        const persona = await createPersona(new Persona(null, nombre, apellido, mail, clave, fecha_nacimiento, direccion));
+        const persona = await createPersona(new Persona(null, nombre, apellido, mail, clave, fecha_nacimiento, direccion, role));
 
         return res.status(201)
                     .json(persona);
@@ -97,7 +101,7 @@ routes.post('/personas', async (req, res) => {
     }
 });
 
-routes.put('/personas/:id', async (req, res) => {
+routes.put('/personas/:id', hasPermission(update), async (req, res) => {
     try {
         const { body } = req;
         const { id } = req.params;
@@ -120,10 +124,10 @@ routes.put('/personas/:id', async (req, res) => {
                     })
         }
 
-        const { nombre, apellido, fecha_nacimiento, direccion } = body;
+        const { nombre, apellido, mail, fecha_nacimiento, direccion, role } = body;
 
-        await updatePersona(new Persona(id, nombre, apellido, fecha_nacimiento, direccion));
-        
+        await updatePersona(new Persona(id, nombre, apellido, mail, null, fecha_nacimiento, direccion, role));
+
         res.status(200)
         res.json();
     } catch (error) {
@@ -132,13 +136,13 @@ routes.put('/personas/:id', async (req, res) => {
     }
 });
 
-routes.delete('/personas/:id', async (req, res) => {
+routes.delete('/personas/:id', hasPermission(remove), async (req, res) => {
     try {
         const { body } = req;
         const { id } = req.params;
         const { activo } = body;
 
-        await deletePersona(new Persona(id, null, null, null, null, activo));
+        await deletePersona(new Persona(id, null, null, null, null, null, null, null, activo));
 
         res.status(200)
         res.json();

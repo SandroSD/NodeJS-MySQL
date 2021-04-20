@@ -6,7 +6,7 @@ const { getPersonaById, modificarClave } = require('../repositories/persona');
 
 const routes = express.Router();
 
-routes.get('/reiniciar-clave/:id', async (req, res) => {
+routes.get('/reiniciar-clave/personas/:id', async (req, res) => {
 
     const { id } = req.params;
 
