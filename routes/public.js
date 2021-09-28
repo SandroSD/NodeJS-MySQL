@@ -24,23 +24,23 @@ routes.post('/auth/login', async (req, res) => {
 
         const persona = await getPersonaByMail(body.mail);
 
-        const role = await getRoleById(persona.role);
-
-        persona.role = role;
-
         if(!persona) {
             return res.status(400)
                         .json({
-                            error: 'Persona no encontrada.'
+                            err: 'Persona no encontrada.'
                         });
         }
+
+        const role = await getRoleById(persona.role);
+
+        persona.role = role;
 
         const claveValida = await bcrypt.compare(body.clave, persona.clave);
 
         if(!claveValida) {
             return res.status(400)
                         .json({
-                            error: 'Clave inválida.'
+                            err: 'Clave incorrecta.'
                         });
         }
 
